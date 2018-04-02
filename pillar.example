@@ -2,8 +2,10 @@
 
 # Right now, only static configuration is supported
 etcd:
-   cluster:
-     peers:
-       node-1: 
-         ip: 192.168.1.10
+  install:
+    version: 3.3.3
+  cluster:
+    peers:
+      node-1:
+        ip: 192.168.1.10
        

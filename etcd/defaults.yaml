@@ -6,11 +6,14 @@ etcd:
   data_directory: /opt/etcd/data
 
   cluster:
-    token: my-etcd-cluster
-    peer_port: 2380
     client_port: 2379
+    peer_port: 2380
+    peers:
+      node-1:
+        ip: 127.0.0.1
+    token: my-etcd-cluster
   
   install:
     base_url: http://github.com/coreos/etcd/releases/download
-    version: 2.1.2
+    version: 3.2.18
 
