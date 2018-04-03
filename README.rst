@@ -14,7 +14,7 @@ Available states
 .. contents::
     :local:
 
-``static``
+``etcd``
 ----------
 
 Install etcd and startup the service in cluster mode by using a static node configuration. The following pillar
