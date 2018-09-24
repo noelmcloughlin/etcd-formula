@@ -6,7 +6,7 @@ etcd:
   arch: amd64
   pkg:
   service_enabled: true
-  version: 3.2.18
+  version: 3.2.24
   #linux/darwin
   bakdir: /tmp/etcd_backup/
   command: etcd
@@ -48,11 +48,12 @@ etcd:
     volumes:
       - /usr/share/ca-certificates/:/etc/ssl/certs
     stop_local_etcd_service_first: true
+    pip_requests_version_wanted: '<2.19,!=2.18.0,!=2.11.0,!=2.12.2,>=2.6.1'   #redhat
 
   service:
     #defaults for linux
     name: etcd0
-    etcd_endpoints: 'https://127.0.0.1:2379,https://127.0.0.1:2380'
+    #etcd_endpoints: 'https://127.0.0.1:2379,https://127.0.0.1:2380'
     data_dir: /var/lib/etcd/etcd0
     initial_cluster: 'etcd0=https://127.0.0.1:2380'
     initial_cluster_state: new

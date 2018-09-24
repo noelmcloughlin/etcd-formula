@@ -7,24 +7,35 @@ include:
   - etcd.service.stopped
    {% endif %}
 
+#centos7 fix https://github.com/saltstack-formulas/etcd-formula/issues/19 
+etcd-docker-compose-request-conflict-resolution:
+  pip.installed:
+    - names:
+      - requests {{ etcd.docker.pip_requests_version_wanted }}
+    - exists_action: i
+    - reload_modules: True
+    - onlyif: {{ grains.os_family == 'RedHat' }}
+
 {% for pkg in etcd.docker.packages -%}
   {% if pkg %}
 etcd-docker-{{ pkg }}-package:
   pkg.installed:
     - name:  {{ pkg }}
+    - require:
+      - pip: etcd-docker-compose-request-conflict-resolution
     - require_in:
       - docker_container: run-etcd-dockerized-service
     - onfail_in:
-      - pip: etcd-docker-python-module
+      - pip: etcd-docker-python-pip-install
   {% endif %}
 {% endfor %}
 
-etcd-docker-python-module:
+etcd-docker-python-pip-install:
   pip.installed:
     - name: 'docker'
     - reload_modules: True
     - exists_action: i
-    - force_reinstall: True
+    - force_reinstall: False
     - require_in:
       - docker_container: run-etcd-dockerized-service
 

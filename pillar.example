@@ -2,7 +2,7 @@
 
 ## Minimal optional configuration
 etcd:
-  version: 3.2.18
+  version: 3.2.24
 
 ## More optional pillars follow ... (see defaults.yaml)
   src_hashsum:
