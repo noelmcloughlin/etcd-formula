@@ -9,12 +9,19 @@ stop on runlevel [016]
 respawn
 respawn limit 10 5
 
-{% for key,value in etcd.items() -%}
+{#- ignore --param bools in environ #}
+{%- for key,value in etcd.service.items() if value in (True, False) -%}
 env ETCD_{{ key|string|upper }}='{{ value or "" }}'
-{% endfor %}
-{% for key,value in etcd.etcdctl.items() -%}
+{%- endfor %}
+{%- for key,value in etcd.etcdctl.items() if value in (True, False) -%}
 env ETCDCTL_{{ key|string|upper }}='{{ value or "" }}'
-{% endfor %}
+{%- endfor %}
+
+{#- instead, pass --param bools to exec command #}
+{%- set args = [] %}
+{%- for key,value in etcd.service.items() if value in (True,) -%}
+{%- do args.append( '--' ~ key ~ ' ' ) %}
+{%- endfor %}
 
 chdir {{ etcd.datadir }}
-exec {{ etcd.realhome }}/etcd >>{{ etcd.logdir }}/etcd.log 2>&1
+exec {{ etcd.realhome }}/etcd {{ args|join(' ') }}  >>{{ etcd.logdir }}/etcd.log 2>&1
