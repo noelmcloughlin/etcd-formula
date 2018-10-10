@@ -9,12 +9,8 @@ stop on runlevel [016]
 respawn
 respawn limit 10 5
 
-<<<<<<< HEAD
 {#- ignore --param bools in environ #}
 {%- for key,value in etcd.service.items() if value in (True, False) -%}
-=======
-{% for key,value in etcd.services.items() -%}
->>>>>>> b8df3a7... Fix upstart config file
 env ETCD_{{ key|string|upper }}='{{ value or "" }}'
 {%- endfor %}
 {%- for key,value in etcd.etcdctl.items() if value in (True, False) -%}
