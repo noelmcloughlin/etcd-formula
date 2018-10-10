@@ -5,7 +5,7 @@ etcd:
   #windows/linu/darwin
   arch: amd64
   pkg:
-  service_enabled: true
+  service_enabled: True
   version: 3.2.24
   #linux/darwin
   bakdir: /tmp/etcd_backup/
@@ -39,8 +39,8 @@ etcd:
   docker:
     packages: ['python-docker', 'python3-docker',]
     enabled: false
-    image: quay.io/coreos/etcd
-    version: latest
+    image: gcr.io/etcd-development/etcd
+    version: v3.2.24
     network_mode: host
     ports:
       - '127.0.0.1:2379:2379'
