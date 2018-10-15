@@ -7,14 +7,21 @@ After=network.target
 User=root
 Type=notify
 
-{% for key,value in etcd.service.items() -%}
+{#- ignore --param bools in environ #}
+{%- for key,value in etcd.service.items() if value not in (False, True,) %}
 Environment='ETCD_{{ key|string|upper }}={{ value or "" }}'
-{% endfor %}
-{% for key,value in etcd.etcdctl.items() -%}
+{%- endfor %}
+{%- for key,value in etcd.etcdctl.items() if value not in (False, True) %}
 Environment='ETCDCTL_{{ key|string|upper }}={{ value or "" }}'
-{% endfor %}
+{%- endfor %}
 
-ExecStart={{ etcd.realhome }}/etcd
+{#- instead pass --param bools to exec command #}
+{%- set args = [] %}
+{%- for key,value in etcd.service.items() if value in (True,) %}
+{%- do args.append( '--' ~ key ~ ' ' ) %}
+{%- endfor %}
+
+ExecStart={{ etcd.realhome }}/etcd {{ args|join(' ') }}
 Restart=always
 RestartSec=10s
 LimitNOFILE=40000

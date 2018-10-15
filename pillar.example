@@ -2,7 +2,7 @@
 
 ## Minimal optional configuration
 etcd:
-  version: 3.2.18
+  version: 3.2.24
 
 ## More optional pillars follow ... (see defaults.yaml)
   src_hashsum:
@@ -25,8 +25,9 @@ etcd:
     cert_file: /etc/ssl/etcd/ca.pem
     key_file: /etc/ssl/etcd/client.pem
     ca_file: /etc/ssl/etcd/client-key.pem
-    auto_tls: '"false"'
-    peer_auto_tls: '"false"'
+    auto_tls: False
+    peer_auto_tls: False
+    insecure-skip-verify-tls: False
 
   etcdctl:
     api: 2

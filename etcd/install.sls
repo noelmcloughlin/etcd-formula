@@ -2,18 +2,26 @@
 # vim: ft=yaml
 {% from "etcd/map.jinja" import etcd with context -%}
 
-  {% if etcd.manage_users == true %}
+include:
+  - etcd.service
+
+  {%- if etcd.manage_users %}
 etcd-user-group-home:
   group.present:
     - name: {{ etcd.group or 'etcd' }}
     - system: True
+    - require_in:
+      - user: etcd-user-group-home
   user.present:
     - name: {{ etcd.user or 'etcd' }}
-    - gid_from_name: true
+    - gid_from_name: True
     - home: {{ etcd.prefix }}
+    - require:
+      - group: etcd-user-group-home
     - require_in:
       - file: etcd-user-envfile
-  {% endif %}
+      - file: etcd-extract-dirs
+  {%- endif %}
 
 # Cleanup first
 etcd-remove-prev-archive:
@@ -32,12 +40,15 @@ etcd-extract-dirs:
       - {{ etcd.tmpdir }}
       - {{ etcd.prefix }}
       - {{ etcd.datadir }}
-  {% if etcd.manage_users %}
+  {%- if etcd.manage_users %}
     - user: {{ etcd.user or 'etcd' }}
     - group: {{ etcd.group or 'etcd' }}
     - recurse:
       - user
       - group
+    - require:
+      - user: etcd-user-group-home
+      - group: etcd-user-group-home
     - require_in:
       - file: etcd-user-envfile
 
@@ -51,10 +62,13 @@ etcd-user-envfile:
     - group: {{ etcd.group or 'etcd' }}
     - context:
       etcd: {{ etcd|json }}
+    - require_in:
+      - cmd: etcd-download-archive
+      - service: etcd_{{ etcd.service_name }}_running
 
-  {% endif %}
+  {%- endif %}
 
-{% if etcd.use_upstream_repo|lower == 'true' %}
+{%- if etcd.use_upstream_repo|lower == 'true' %}
 
 etcd-download-archive:
   cmd.run:
@@ -76,14 +90,14 @@ etcd-check-archive-hash:
        - archive: etcd-install
     {%- endif %}
 
-{% endif %}
+{%- endif %}
 
 etcd-install:
 {% if grains.os == 'MacOS' and etcd.use_upstream_repo|lower == 'homebrew' %}
   pkg.installed:
     - name: {{ etcd.pkg }}
     - version: {{ etcd.version }}
-{% elif etcd.use_upstream_repo|lower == 'true' %}
+{%- elif etcd.use_upstream_repo|lower == 'true' %}
   archive.extracted:
     - source: 'file://{{ etcd.tmpdir }}/{{ etcd.dl.archive_name }}'
     - name: '{{ etcd.prefix }}'
@@ -97,5 +111,5 @@ etcd-install:
     - source_hash: {{ etcd.src_hashurl }}
     {%- endif %}
 
-{% endif %}
+{%- endif %}
 

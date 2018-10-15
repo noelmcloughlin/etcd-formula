@@ -57,10 +57,9 @@ etcd_{{ etcd.service_name }}_running:
     # todo: add launchd service for non-homebrew installs on MacOS
     - unless: test "`uname`" = "Darwin" && "{{ etcd.use_upstream_repo|lower }}" ==  "true"
 
-etcd_whats_wrong_with_{{ etcd.service_name }}:
+etcd_what_is_status_of_{{ etcd.service_name }}:
   cmd.run:
     - names:
-      - journalctl -xe -u etcd
       - service status etcd
     - onfail:
       - service: etcd_{{ etcd.service_name }}_running
