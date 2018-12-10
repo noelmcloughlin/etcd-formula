@@ -53,14 +53,15 @@ etcd:
     # If docker_enabled=True, defaults can be overridden here
     image: quay.io/coreos/etcd
     version: latest
+    skip_translate: True
     ports:
-      - 'tcp/2379'
-      - 'tcp/2380'
-      - 'udp/2379'
-      - 'udp/2380'
+      - 2379
+      - 2380
+      - 2379/udp
+      - 2380/udp
     port_bindings:
-      - '127.0.0.1:2379:2379'
-      - '127.0.0.1:2380:2380'
+      - 0.0.0.0:2379:2379
+      - 0.0.0.0:2380:2380
     volumes:
       - /usr/share/ca-certificates/:/etc/ssl/certs
     stop_local_etcd_service_first: False

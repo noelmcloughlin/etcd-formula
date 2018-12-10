@@ -47,6 +47,7 @@ etcd-ensure-docker-service:
 
 run-etcd-dockerized-service:
   docker_container.running:
+    - skip_translate: {{ etcd.docker.skip_translate }}
        {% if etcd.docker.version %}
     - image: {{ etcd.docker.image }}:{{ etcd.docker.version }}
        {% else %}
@@ -54,9 +55,11 @@ run-etcd-dockerized-service:
        {% endif %}
     - command: {{ etcd.docker.cmd }}
     - binds:
-        {% for volume in etcd.docker.volumes %}
+        {%- if "volumes" in etcd.docker %}
+          {% for volume in etcd.docker.volumes %}
       - {{ volume }}
-        {% endfor %}
+          {% endfor %}
+        {%- endif %}
     - ports:
         {% for port in etcd.docker.ports %}
       - {{ port }}
