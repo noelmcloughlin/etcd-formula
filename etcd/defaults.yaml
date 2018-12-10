@@ -43,6 +43,11 @@ etcd:
     version: v3.2.24
     network_mode: host
     ports:
+      - 'tcp/2379'
+      - 'tcp/2380'
+      - 'udp/2379'
+      - 'udp/2380'
+    port_bindings:
       - '127.0.0.1:2379:2379'
       - '127.0.0.1:2380:2380'
     volumes:

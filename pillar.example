@@ -54,9 +54,13 @@ etcd:
     image: quay.io/coreos/etcd
     version: latest
     ports:
+      - 'tcp/2379'
+      - 'tcp/2380'
+      - 'udp/2379'
+      - 'udp/2380'
+    port_bindings:
       - '127.0.0.1:2379:2379'
       - '127.0.0.1:2380:2380'
-      - '127.0.0.1:4001:4001'
     volumes:
       - /usr/share/ca-certificates/:/etc/ssl/certs
     stop_local_etcd_service_first: False

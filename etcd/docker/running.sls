@@ -57,7 +57,11 @@ run-etcd-dockerized-service:
         {% for volume in etcd.docker.volumes %}
       - {{ volume }}
         {% endfor %}
-    - port_bindings:
+    - ports:
         {% for port in etcd.docker.ports %}
       - {{ port }}
+        {% endfor %}
+    - port_bindings:
+        {% for porty in etcd.docker.port_bindings %}
+      - {{ porty }}
         {% endfor %}
