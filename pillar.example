@@ -54,6 +54,10 @@ etcd:
     image: quay.io/coreos/etcd
     version: latest
     skip_translate: True
+    cmd_args: ''
+    environment:
+      - ETCD_AUTO_TLS: False
+      - ETCD_PEER_AUTO_TLS: False
     ports:
       - 2379
       - 2380

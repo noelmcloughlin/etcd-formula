@@ -43,6 +43,10 @@ etcd:
     image: gcr.io/etcd-development/etcd
     version: v3.2.24
     network_mode: host
+    cmd_args: '--auto-tls --peer-auto-tls'
+    #environment:
+    #  - ETCD_AUTO_TLS: True
+    #  - ETCD_PEER_AUTO_TLS: True
     ports:
       - 2379
       - 2380

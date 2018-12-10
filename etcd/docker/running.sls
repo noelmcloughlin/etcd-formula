@@ -54,8 +54,14 @@ run-etcd-dockerized-service:
     - image: {{ etcd.docker.image }}
        {% endif %}
     - command: {{ etcd.docker.cmd }}
-    - binds:
+        {%- if "environment" in etcd.docker %}
+    - environment:
+          {%- for k,v in etcd.docker.environment %}
+      - {{ k|upper }}: {{ v }}
+          {% endfor %}
+        {%- endif %}
         {%- if "volumes" in etcd.docker %}
+    - binds:
           {% for volume in etcd.docker.volumes %}
       - {{ volume }}
           {% endfor %}
