@@ -38,8 +38,9 @@ etcd:
 
   docker:
     skip_translate: None
-    packages: ['python-docker', 'python3-docker',]
+    packages: []
     enabled: false
+    container_name: etcd-docker-svc
     image: gcr.io/etcd-development/etcd
     version: v3.2.24
     network_mode: host

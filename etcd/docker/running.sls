@@ -16,8 +16,9 @@ etcd-docker-compose-request-conflict-resolution:
     - reload_modules: True
     - onlyif: {{ grains.os_family == 'RedHat' }}
 
-{% for pkg in etcd.docker.packages -%}
-  {% if pkg %}
+{%- if etcd.docker.packages %}
+  {% for pkg in etcd.docker.packages -%}
+
 etcd-docker-{{ pkg }}-package:
   pkg.installed:
     - name:  {{ pkg }}
@@ -27,8 +28,9 @@ etcd-docker-{{ pkg }}-package:
       - docker_container: run-etcd-dockerized-service
     - onfail_in:
       - pip: etcd-docker-python-pip-install
-  {% endif %}
-{% endfor %}
+
+  {% endfor %}
+{% endif %}
 
 etcd-docker-python-pip-install:
   pip.installed:
@@ -47,6 +49,7 @@ etcd-ensure-docker-service:
 
 run-etcd-dockerized-service:
   docker_container.running:
+    - name: {{ etcd.docker.container_name }}
     - skip_translate: {{ etcd.docker.skip_translate }}
        {% if etcd.docker.version %}
     - image: {{ etcd.docker.image }}:{{ etcd.docker.version }}
