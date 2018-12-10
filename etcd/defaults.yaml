@@ -37,14 +37,24 @@ etcd:
     unpack_opts: --strip-components=1
 
   docker:
+    skip_translate: None
     packages: ['python-docker', 'python3-docker',]
     enabled: false
     image: gcr.io/etcd-development/etcd
     version: v3.2.24
     network_mode: host
+    cmd_args: '--auto-tls --peer-auto-tls'
+    #environment:
+    #  - ETCD_AUTO_TLS: True
+    #  - ETCD_PEER_AUTO_TLS: True
     ports:
-      - '127.0.0.1:2379:2379'
-      - '127.0.0.1:2380:2380'
+      - 2379
+      - 2380
+      - 2379/udp
+      - 2380/udp
+    port_bindings:
+      - 0.0.0.0:2379:2379
+      - 0.0.0.0:2380:2380
     volumes:
       - /usr/share/ca-certificates/:/etc/ssl/certs
     stop_local_etcd_service_first: true
