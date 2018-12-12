@@ -51,7 +51,8 @@ etcd:
   docker:
     enabled: True
     # If docker_enabled=True, defaults can be overridden here
-    image: quay.io/coreos/etcd
+    ###image: quay.io/coreos/etcd
+    ###image: gcr.io/etcd-development/etcd
     version: latest
     skip_translate: True
     cmd_args: ''
