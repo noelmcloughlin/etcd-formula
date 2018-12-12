@@ -41,8 +41,8 @@ etcd:
     packages: []
     enabled: false
     container_name: etcd-docker-svc
-    image: quay.io/coreos/etcd:latest
-    version: v3.2.24
+    image: quay.io/coreos/etcd
+    version: latest   {# > v3.2.24 #}
     network_mode: host
     cmd_args: '--auto-tls --peer-auto-tls'
     #environment:

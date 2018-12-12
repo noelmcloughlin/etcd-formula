@@ -51,11 +51,9 @@ run-etcd-dockerized-service:
   docker_container.running:
     - name: {{ etcd.docker.container_name }}
     - skip_translate: {{ etcd.docker.skip_translate }}
-       {% if etcd.docker.version %}
     - image: {{ etcd.docker.image }}:{{ etcd.docker.version }}
-       {% else %}
-    - image: {{ etcd.docker.image }}
-       {% endif %}
+    - restart_policy: always
+    - network_mode: host
     - command: {{ etcd.docker.cmd }}
         {%- if "environment" in etcd.docker %}
     - environment:
