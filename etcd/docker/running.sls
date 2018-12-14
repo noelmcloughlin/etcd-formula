@@ -1,40 +1,34 @@
 # -*- coding: utf-8 -*-
 # vim: ft=yaml
-{% from "etcd/map.jinja" import etcd with context -%}
+{%- from "etcd/map.jinja" import etcd with context %}
 
-   {% if etcd.docker.stop_local_etcd_service_first %}
+   {%- if etcd.docker.stop_local_etcd_service_first %}
 include:
   - etcd.service.stopped
    {% endif %}
 
-#centos7 fix https://github.com/saltstack-formulas/etcd-formula/issues/19 
-etcd-docker-compose-request-conflict-resolution:
-  pip.installed:
-    - names:
-      - requests {{ etcd.docker.pip_requests_version_wanted }}
-    - exists_action: i
-    - reload_modules: True
-    - onlyif: {{ grains.os_family == 'RedHat' }}
-
 {%- if etcd.docker.packages %}
-  {% for pkg in etcd.docker.packages -%}
+  {%- for pkg in etcd.docker.packages %}
 
 etcd-docker-{{ pkg }}-package:
   pkg.installed:
     - name:  {{ pkg }}
-    - require:
-      - pip: etcd-docker-compose-request-conflict-resolution
     - require_in:
       - docker_container: run-etcd-dockerized-service
     - onfail_in:
-      - pip: etcd-docker-python-pip-install
+      - pip: etcd-docker-python-modules-install
 
   {% endfor %}
 {% endif %}
 
-etcd-docker-python-pip-install:
+etcd-docker-python-modules-install:
   pip.installed:
-    - name: 'docker'
+    - names:
+      - docker
+    {%- if grains.os_family == 'RedHat' %}
+       {# https://github.com/saltstack-formulas/etcd-formula/issues/19  #}
+      - requests {{ etcd.docker.pip_requests_version_wanted }}
+    {%- endif %}
     - reload_modules: True
     - exists_action: i
     - force_reinstall: False

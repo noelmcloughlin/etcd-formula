@@ -32,4 +32,4 @@ Windows:
 
 Ubuntu:
   docker:
-    packages: ['python-docker', python3-docker',]
+    packages: ['python-docker', 'python3-docker',]
