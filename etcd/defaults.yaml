@@ -63,6 +63,7 @@ etcd:
   service:
     #defaults for linux
     name: etcd0
+    # not supported #endpoints: 'https://127.0.0.1:2379,https://127.0.0.1:2380'
     data_dir: /var/lib/etcd/etcd0
     initial_cluster: 'etcd0=https://127.0.0.1:2380'
     initial_cluster_state: new
@@ -73,10 +74,9 @@ etcd:
     advertise_client_urls: 'https://127.0.0.1:2379'
     ##etcd can be configured to automatically generate its keys. On initialization,
     ##each member creates its own set of keys based on its advertised IP addresses and hosts.
-    cmd_args: '--auto-tls --peer-auto-tls'
     auto-tls: True
     peer-auto-tls: True
-    #insecure-skip-verify-tls: True ##See also https://github.com/etcd-io/etcd/issues/7930
+    cmd_args: '--auto-tls --peer-auto-tls'
 
   etcdctl:
     api: 3
