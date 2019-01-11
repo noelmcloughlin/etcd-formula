@@ -44,7 +44,6 @@ etcd:
     image: quay.io/coreos/etcd
     version: latest   {# > v3.2.24 #}
     network_mode: host
-    cmd_args: '--auto-tls --peer-auto-tls'
     #environment:
     #  - ETCD_AUTO_TLS: True
     #  - ETCD_PEER_AUTO_TLS: True
@@ -77,7 +76,7 @@ etcd:
     ##each member creates its own set of keys based on its advertised IP addresses and hosts.
     auto-tls: True
     peer-auto-tls: True
-    #insecure-skip-verify-tls: True ##See also https://github.com/etcd-io/etcd/issues/7930
+    cmd_args: '--auto-tls --peer-auto-tls'
 
   etcdctl:
     api: 3

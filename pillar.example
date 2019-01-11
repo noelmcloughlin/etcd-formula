@@ -12,7 +12,6 @@ etcd:
   service:
     name: etcd0
     data_dir: /var/lib/etcd/etcd0
-    #etcd_endpoints: 'https://etcd01:2379,https://etcd02:2379,https://etcd03:2379'
     initial_cluster: 'etcd0=https://0.0.0.0:2380'
     initial_cluster_state: new
     initial_cluster_token: etcd-cluster-1
@@ -25,9 +24,10 @@ etcd:
     cert_file: /etc/ssl/etcd/ca.pem
     key_file: /etc/ssl/etcd/client.pem
     ca_file: /etc/ssl/etcd/client-key.pem
+
+    cmd_args: ''
     auto_tls: False
     peer_auto_tls: False
-    insecure-skip-verify-tls: False
 
   etcdctl:
     api: 2
@@ -55,7 +55,6 @@ etcd:
     ###image: gcr.io/etcd-development/etcd
     version: latest
     skip_translate: True
-    cmd_args: ''
     environment:
       - ETCD_AUTO_TLS: False
       - ETCD_PEER_AUTO_TLS: False
