@@ -3,13 +3,12 @@
 {% from "etcd/map.jinja" import etcd with context -%}
 
 include:
+  - etcd.install
+  - etcd.linuxenv
      {% if etcd.docker.enabled %}
   - etcd.docker.running
-
-     {% else %}
-  - etcd.install
+     {%- else %}
   - etcd.service
-  - etcd.linuxenv
 
 extend:
   etcd_{{ etcd.service_name }}_running:

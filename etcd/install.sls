@@ -2,8 +2,10 @@
 # vim: ft=yaml
 {% from "etcd/map.jinja" import etcd with context -%}
 
+  {%- if not etcd.docker.enabled %}
 include:
   - etcd.service
+  {%- endif %}
 
   {%- if etcd.manage_users %}
 etcd-user-group-home:
@@ -64,7 +66,9 @@ etcd-user-envfile:
       etcd: {{ etcd|json }}
     - require_in:
       - cmd: etcd-download-archive
+  {%- if not etcd.docker.enabled %}
       - service: etcd_{{ etcd.service_name }}_running
+  {%- endif %}
 
   {%- endif %}
 
@@ -103,8 +107,10 @@ etcd-install:
     - name: '{{ etcd.prefix }}'
     - archive_format: {{ etcd.dl.format.split('.')[0] }}
     - unless: test -f {{ etcd.realhome }}{{ etcd.command }}
+  {%- if not etcd.docker.enabled %}
     - watch_in:
       - service: etcd_{{ etcd.service_name }}_running
+  {%- endif %}
     - onchanges:
       - cmd: etcd-download-archive
     {%- if etcd.src_hashurl and grains['saltversioninfo'] > [2016, 11, 6] %}
