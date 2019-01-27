@@ -25,13 +25,6 @@ etcd-user-group-home:
       - file: etcd-extract-dirs
   {%- endif %}
 
-# Cleanup first
-etcd-remove-prev-archive:
-  file.absent:
-    - name: {{ etcd.tmpdir }}{{ etcd.dl.archive_name }}
-    - require_in:
-      - etcd-extract-dirs
-
 etcd-extract-dirs:
   file.directory:
     - makedirs: True
@@ -66,21 +59,25 @@ etcd-user-envfile:
       etcd: {{ etcd|json }}
     - require_in:
       - cmd: etcd-download-archive
-  {%- if not etcd.docker.enabled %}
+     {%- if not etcd.docker.enabled %}
       - service: etcd_{{ etcd.service_name }}_running
-  {%- endif %}
+     {%- endif %}
 
   {%- endif %}
-
-{%- if etcd.use_upstream_repo|lower == 'true' %}
+  {%- if etcd.use_upstream_repo|lower == 'true' %}
 
 etcd-download-archive:
   cmd.run:
-    - name: curl {{ etcd.dl.opts }} -o '{{ etcd.tmpdir }}{{ etcd.dl.archive_name }}' {{ etcd.dl.src_url }}
+    - name: curl {{ etcd.dl.opts }} -o {{ etcd.tmpdir }}{{ etcd.dl.archive_name }} {{ etcd.dl.src_url }}
+    - unless: test -f {{ etcd.tmpdir }}{{ etcd.dl.archive_name }}
+    {%- if grains['saltversioninfo'] >= [2017, 7, 0] %}
     - retry:
         attempts: {{ etcd.dl.retries }}
         interval: {{ etcd.dl.interval }}
+        until: True
+        splay: 10
     - unless: test -f {{ etcd.realhome }}/{{ etcd.command }}
+    {%- endif %}
 
     {%- if etcd.src_hashsum and grains['saltversioninfo'] <= [2016, 11, 6] %}
 etcd-check-archive-hash:
@@ -88,34 +85,33 @@ etcd-check-archive-hash:
      - name: file.check_hash
      - path: '{{ etcd.tmpdir }}/{{ etcd.dl.archive_name }}'
      - file_hash: {{ etcd.src_hashsum }}
-     - onchanges:
+     - require:
        - cmd: etcd-download-archive
      - require_in:
        - archive: etcd-install
     {%- endif %}
 
-{%- endif %}
+  {%- endif %}
 
 etcd-install:
-{% if grains.os == 'MacOS' and etcd.use_upstream_repo|lower == 'homebrew' %}
+  {% if grains.os == 'MacOS' and etcd.use_upstream_repo|lower == 'homebrew' %}
   pkg.installed:
     - name: {{ etcd.pkg }}
     - version: {{ etcd.version }}
-{%- elif etcd.use_upstream_repo|lower == 'true' %}
+  {%- elif etcd.use_upstream_repo|lower == 'true' %}
   archive.extracted:
     - source: 'file://{{ etcd.tmpdir }}/{{ etcd.dl.archive_name }}'
     - name: '{{ etcd.prefix }}'
     - archive_format: {{ etcd.dl.format.split('.')[0] }}
     - unless: test -f {{ etcd.realhome }}{{ etcd.command }}
-  {%- if not etcd.docker.enabled %}
+    - require:
+      - cmd: etcd-download-archive
+      {%- if etcd.src_hashurl and grains['saltversioninfo'] > [2016, 11, 6] %}
+    - source_hash: {{ etcd.src_hashurl }}
+      {%- endif %}
+      {%- if not etcd.docker.enabled %}
     - watch_in:
       - service: etcd_{{ etcd.service_name }}_running
+      {%- endif %}
+
   {%- endif %}
-    - onchanges:
-      - cmd: etcd-download-archive
-    {%- if etcd.src_hashurl and grains['saltversioninfo'] > [2016, 11, 6] %}
-    - source_hash: {{ etcd.src_hashurl }}
-    {%- endif %}
-
-{%- endif %}
-
