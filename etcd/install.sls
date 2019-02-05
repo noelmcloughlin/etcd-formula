@@ -76,7 +76,6 @@ etcd-download-archive:
         interval: {{ etcd.dl.interval }}
         until: True
         splay: 10
-    - unless: test -f {{ etcd.realhome }}/{{ etcd.command }}
     {%- endif %}
 
     {%- if etcd.src_hashsum and grains['saltversioninfo'] <= [2016, 11, 6] %}
