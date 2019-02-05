@@ -68,8 +68,8 @@ etcd-user-envfile:
 
 etcd-download-archive:
   cmd.run:
-    - name: curl {{ etcd.dl.opts }} -o {{ etcd.tmpdir }}{{ etcd.dl.archive_name }} {{ etcd.dl.src_url }}
-    - unless: test -f {{ etcd.tmpdir }}{{ etcd.dl.archive_name }}
+    - name: curl {{ etcd.dl.opts }} -o {{ etcd.tmpdir }}/{{ etcd.dl.archive_name }} {{ etcd.dl.src_url }}
+    - unless: test -f {{ etcd.tmpdir }}/{{ etcd.dl.archive_name }}
     {%- if grains['saltversioninfo'] >= [2017, 7, 0] %}
     - retry:
         attempts: {{ etcd.dl.retries }}
