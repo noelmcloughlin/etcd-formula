@@ -22,16 +22,21 @@ etcd-docker-{{ pkg }}-package:
 {% endif %}
 
 etcd-docker-python-modules-install:
+       {%- if grains.os_family in ('Suse',) %}  ##workaround https://github.com/saltstack-formulas/docker-formula/issues/198
+  cmd.run:
+    - name: /usr/bin/pip install docker
+       {%- else %}
   pip.installed:
     - names:
       - docker
-    {%- if grains.os_family == 'RedHat' %}
-       {# https://github.com/saltstack-formulas/etcd-formula/issues/19  #}
+            {%- if grains.os_family == 'RedHat' %}
+               {# https://github.com/saltstack-formulas/etcd-formula/issues/19  #}
       - requests {{ etcd.docker.pip_requests_version_wanted }}
-    {%- endif %}
+            {%- endif %}
     - reload_modules: True
     - exists_action: i
     - force_reinstall: False
+        {%- endif %}
     - require_in:
       - docker_container: run-etcd-dockerized-service
 
