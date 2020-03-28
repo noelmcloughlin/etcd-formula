@@ -12,7 +12,8 @@ etcd-launchd:
     - watch_in:
       - etcd_{{ etcd.service_name }}_running
 
-{% elif grains.init == 'systemd' %}
+{% elif "init" in grains %}
+    {%- if grains.init == 'systemd' %}
 
 etcd-systemd:
   file.managed:
@@ -33,7 +34,7 @@ etcd-systemd:
     - require_in:
       - service:  etcd_{{ etcd.service_name }}_running
 
-{% elif grains.init  == 'upstart' %}
+    {% elif grains.init  == 'upstart' %}
 
 etcd-service:
   file.managed:
@@ -48,6 +49,7 @@ etcd-service:
     - require_in:
       - service:  etcd_{{ etcd.service_name }}_running 
 
+    {% endif %}
 {% endif %}
 
 etcd_{{ etcd.service_name }}_running:
