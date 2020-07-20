@@ -16,7 +16,7 @@ etcd-user-group-home:
       - user: etcd-user-group-home
   user.present:
     - name: {{ etcd.user or 'etcd' }}
-    - gid_from_name: True
+    - gid: {{ etcd.group or 'etcd' }}
     - home: {{ etcd.prefix }}
     - require:
       - group: etcd-user-group-home

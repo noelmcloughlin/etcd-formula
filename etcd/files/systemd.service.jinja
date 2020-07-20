@@ -4,7 +4,10 @@ Documentation=https://github.com/coreos/etcd
 After=network.target
 
 [Service]
-User=root
+{%- if etcd.manage_users %}
+User={{ etcd.user or 'etcd' }}
+Group={{ etcd.group or 'etcd' }}
+{%- endif %}
 Type=notify
 
 {#- ignore --param bools in environ #}
